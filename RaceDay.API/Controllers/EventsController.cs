@@ -34,13 +34,22 @@ namespace RaceDay.API.Controllers
         /// <summary>
         /// Lists all events, soonest first. Open to everyone.
         /// </summary>
+        /// <param name="search">Optional text to match against the event name or location.</param>
+        /// <param name="eventType">Optional filter: Run, Walk or Cycle.</param>
         /// <response code="200">The list of events.</response>
         [HttpGet]
         [ProducesResponseType(typeof(List<EventResponseDTO>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetEvents()
+        public async Task<IActionResult> GetEvents([FromQuery] string? search, [FromQuery] string? eventType)
         {
-            var events = await Project(Context.Events.OrderBy(e => e.EventDate))
-                .ToListAsync();
+            var query = Context.Events.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+                query = query.Where(e => e.Name.Contains(search) || e.Location.Contains(search));
+
+            if (!string.IsNullOrWhiteSpace(eventType))
+                query = query.Where(e => e.EventType == eventType);
+
+            var events = await Project(query.OrderBy(e => e.EventDate)).ToListAsync();
 
             return Ok(events);
         }
@@ -54,18 +63,15 @@ namespace RaceDay.API.Controllers
         [HttpGet("{id:int}")]
         [ProducesResponseType(typeof(EventResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEvent([FromQuery] string? search, [FromQuery] string? eventType)
+        public async Task<IActionResult> GetEvent(int id)
         {
-            var query = Context.Events.AsQueryable();
+            var ev = await Project(Context.Events.Where(e => e.EventID == id))
+                .FirstOrDefaultAsync();
 
-            if (!string.IsNullOrWhiteSpace(search))
-                query = query.Where(e => e.Name.Contains(search) || e.Location.Contains(search));
+            if (ev == null)
+                return NotFound();
 
-            if (!string.IsNullOrWhiteSpace(eventType))
-                query = query.Where(e => e.EventType == eventType);
-
-            var events = await Project(query.OrderBy(e => e.EventDate)).ToListAsync();
-            return Ok(events);
+            return Ok(ev);
         }
 
         /// <summary>
