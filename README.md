@@ -122,5 +122,4 @@ dotnet test RaceDay.API.sln --configuration Release
 AI tools (Claude) were used during Part 3 to help plan the MVC structure and to draft parts of the API client, the Azure Blob upload endpoints, the Docker configuration and this README. I reviewed, tested and adapted the generated work and can explain it in my video presentation.
 
 ## References
-
-`ADD_HARVARD_REFERENCES_FOR_SOURCES_YOU_ACTUALLY_USED_HERE`
+claude (AI tool)
