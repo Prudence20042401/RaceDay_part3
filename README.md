@@ -15,14 +15,13 @@
 RaceDay is a web-based event management system designed specifically for the South African road running, walking, and cycling community. The platform allows Event Organisers to create and manage events, categories, and participant results, while Participants can browse upcoming events, enter events, and track their personal performance history. The system supports role-based access with distinct interfaces for Organisers and Participants.
 
 The project was built in three parts:
-
 | Part | Content | Evidence |
 | 1 | ERD, API endpoint plan, SQL script | `docs/` (see `docs/READMEpart1.md`) |
 | 2 | ASP.NET Core Web API, EF Core, session auth, Swagger, unit tests, CI | `RaceDay.API/`, `RaceDay.API.Tests/`, `docs/Part2-implemented-endpoints.md` |
 | 3 | ASP.NET Core MVC front end, Azure Blob Storage, Docker | `RaceDay.MVC/`, `Dockerfile`, `docker-compose.yml` |
 
-## System roles
 
+## System roles
 **Organiser**
 - Registers with an organiser invite code plus organisation name and phone number.
 - Creates, edits and deletes their own events (name, description, date, location, distance, type) and uploads an event banner image.
