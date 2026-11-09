@@ -4,6 +4,7 @@ using RaceDay.MVC.Services;
 
 namespace RaceDay.MVC.Controllers;
 
+
 public class AccountController : BaseController
 {
     public AccountController(RaceDayApiClient api) : base(api) { }
