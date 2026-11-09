@@ -8,7 +8,7 @@
 
 ### part 3 CI/CD
 - GitHub Actions workflow validates repository structure
-- ![Build Green](
+![Build Green](docs/workflow part 3.png)
 
 ## Overview
 RaceDay is a web-based event management system designed specifically for the South African road running, walking, and cycling community. The platform allows Event Organisers to create and manage events, categories, and participant results, while Participants can browse upcoming events, enter events, and track their personal performance history. The system supports role-based access with distinct interfaces for Organisers and Participants.
