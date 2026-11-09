@@ -14,6 +14,7 @@ public class RegisterViewModel
     public string? OrganisationName { get; set; }
     public string? PhoneNumber { get; set; }
     public string? InviteCode { get; set; }
+
 }
 public class ForgotPasswordViewModel { [Required, EmailAddress] public string Email { get; set; } = ""; public string? Message { get; set; } public string? ResetLink { get; set; } }
 public class ForgotPasswordResponse { public string Message { get; set; } = ""; public string? ResetLink { get; set; } }
