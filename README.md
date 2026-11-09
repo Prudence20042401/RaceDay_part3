@@ -1,3 +1,8 @@
+**Author**: Prudence Dithole
+**Module**: Programming 2B (PROG6212)  
+**Year**: 2026  
+**Institution**: ROSEBANK INTERNATIONAL
+
 # RaceDay
 
 RaceDay is a full-stack event management platform for South African road running, walking and cycling events. Organisers create and manage events, categories and results; Participants browse events, enter by category, track their enrolments and view their race history.
@@ -5,7 +10,6 @@ RaceDay is a full-stack event management platform for South African road running
 The project was built in three parts:
 
 | Part | Content | Evidence |
-|---|---|---|
 | 1 | ERD, API endpoint plan, SQL script | `docs/` (see `docs/READMEpart1.md`) |
 | 2 | ASP.NET Core Web API, EF Core, session auth, Swagger, unit tests, CI | `RaceDay.API/`, `RaceDay.API.Tests/`, `docs/Part2-implemented-endpoints.md` |
 | 3 | ASP.NET Core MVC front end, Azure Blob Storage, Docker | `RaceDay.MVC/`, `Dockerfile`, `docker-compose.yml` |
