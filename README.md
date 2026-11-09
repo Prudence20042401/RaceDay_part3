@@ -3,9 +3,17 @@
 **Year**: 2026  
 **Institution**: ROSEBANK INTERNATIONAL
 
-# RaceDay
 
-RaceDay is a full-stack event management platform for South African road running, walking and cycling events. Organisers create and manage events, categories and results; Participants browse events, enter by category, track their enrolments and view their race history.
+# RaceDay - Event Management System
+
+
+### part 3 CI/CD
+- GitHub Actions workflow validates repository structure
+- ✅ Green build:
+
+
+## Overview
+RaceDay is a web-based event management system designed specifically for the South African road running, walking, and cycling community. The platform allows Event Organisers to create and manage events, categories, and participant results, while Participants can browse upcoming events, enter events, and track their personal performance history. The system supports role-based access with distinct interfaces for Organisers and Participants.
 
 The project was built in three parts:
 
@@ -13,20 +21,6 @@ The project was built in three parts:
 | 1 | ERD, API endpoint plan, SQL script | `docs/` (see `docs/READMEpart1.md`) |
 | 2 | ASP.NET Core Web API, EF Core, session auth, Swagger, unit tests, CI | `RaceDay.API/`, `RaceDay.API.Tests/`, `docs/Part2-implemented-endpoints.md` |
 | 3 | ASP.NET Core MVC front end, Azure Blob Storage, Docker | `RaceDay.MVC/`, `Dockerfile`, `docker-compose.yml` |
-
-## Videos
-
-- Part 1 video: *(see `docs/READMEpart1.md`)*
-- Part 2 video: https://youtu.be/-ym_SpHc0ds?si=LplI8bWlrQ0nQ3pw
-- **Part 3 video (unlisted YouTube):** `ADD_PART3_YOUTUBE_LINK_HERE`
-
-## CI/CD
-
-GitHub Actions workflow: `.github/workflows/dotnet.yml` (restores, builds the API, tests and MVC projects, then runs the unit tests on every push and pull request).
-
-**Part 3 green build:**
-
-`ADD_PART3_GREEN_BUILD_SCREENSHOT_HERE` — save the screenshot as `docs/part3-ci-screenshot.png` and replace this line with `![Part 3 green build](docs/part3-ci-screenshot.png)`
 
 ## System roles
 
