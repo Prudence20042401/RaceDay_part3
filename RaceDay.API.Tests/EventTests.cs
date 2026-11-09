@@ -124,6 +124,12 @@ namespace RaceDay.API.Tests
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
+        [Fact]
+        public async Task Anyone_CanListEvents()
+        {
+            var response = await Client.GetAsync("/api/Events");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
 
         [Fact]
         public async Task Organiser_CanUpdateOwnEvent()
