@@ -27,7 +27,8 @@ namespace RaceDay.API.Controllers
                 Location = e.Location,
                 Distance = e.Distance,
                 EventType = e.EventType,
-                EnrolmentCount = e.Enrolments.Count
+                EnrolmentCount = e.Enrolments.Count,
+                ImageURL = e.EventImages.Where(i => i.IsMain).Select(i => i.ImageURL).FirstOrDefault()
             });
 
         /// <summary>

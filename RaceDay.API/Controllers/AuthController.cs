@@ -4,12 +4,14 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RaceDay.API.Data;
 using RaceDay.API.DTOs;
 using RaceDay.API.Models;
+using RaceDay.API.Services;
 
 namespace RaceDay.API.Controllers
 {
@@ -24,11 +26,25 @@ namespace RaceDay.API.Controllers
         private readonly RaceDayContext _context;
         private readonly IConfiguration _configuration;
         private readonly PasswordHasher<User> _hasher = new();
+        private readonly IDataProtector _resetProtector;
+        private readonly IEmailSender _emailSender;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(RaceDayContext context, IConfiguration configuration)
+        // A password reset link stops working after this long.
+        private static readonly TimeSpan ResetTokenLifetime = TimeSpan.FromHours(1);
+
+        public AuthController(
+            RaceDayContext context,
+            IConfiguration configuration,
+            IDataProtectionProvider dataProtectionProvider,
+            IEmailSender emailSender,
+            ILogger<AuthController> logger)
         {
             _context = context;
             _configuration = configuration;
+            _resetProtector = dataProtectionProvider.CreateProtector("RaceDay.PasswordReset.v1");
+            _emailSender = emailSender;
+            _logger = logger;
         }
 
         /// <summary>
@@ -204,6 +220,126 @@ namespace RaceDay.API.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme);
 
             return Ok(new MessageDTO { Message = "Logged out successfully." });
+        }
+
+        /// <summary>
+        /// Starts a password reset. If an account exists for the email, a reset link
+        /// that is valid for one hour and can be used once is emailed to it.
+        /// The response is identical whether or not the email is registered, so the
+        /// endpoint cannot be used to find out who has an account.
+        /// </summary>
+        /// <response code="200">Request accepted (same message every time).</response>
+        /// <response code="400">The email address is missing or not a valid email.</response>
+        [HttpPost("forgot-password")]
+        [ProducesResponseType(typeof(ForgotPasswordResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO dto)
+        {
+            var response = new ForgotPasswordResponseDTO
+            {
+                Message = "If an account exists for that email address, a password reset link has been sent."
+            };
+
+            var email = dto.Email.Trim().ToLower();
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+                return Ok(response);
+
+            var link = BuildResetLink(CreateResetToken(user));
+
+            var sent = await _emailSender.SendAsync(
+                user.Email,
+                "Reset your RaceDay password",
+                $"Hi {user.FirstName},\n\n" +
+                "We received a request to reset your RaceDay password. " +
+                $"Use the link below within 1 hour:\n\n{link}\n\n" +
+                "If you did not ask for this, you can safely ignore this email.");
+
+            if (!sent)
+                _logger.LogWarning("No SMTP server configured. Password reset link for {Email}: {Link}", user.Email, link);
+
+            // Demo mode only: lets the app show the link when there is no email server.
+            if (_configuration.GetValue<bool>("PasswordReset:ShowLinkInResponse"))
+                response.ResetLink = link;
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Sets a new password using the token from the emailed reset link.
+        /// The token expires after one hour and stops working as soon as the
+        /// password has been changed. The new password is hashed before it is stored.
+        /// </summary>
+        /// <response code="200">Password changed. The user can now log in.</response>
+        /// <response code="400">The link is invalid or expired, or the new password is too short.</response>
+        [HttpPost("reset-password")]
+        [ProducesResponseType(typeof(MessageDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MessageDTO), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO dto)
+        {
+            var user = await ReadResetTokenAsync(dto.Token);
+
+            if (user == null)
+                return BadRequest(new MessageDTO
+                {
+                    Message = "This password reset link is invalid or has expired. Please request a new one."
+                });
+
+            user.PasswordHash = _hasher.HashPassword(user, dto.NewPassword);
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return Ok(new MessageDTO { Message = "Your password has been reset. You can now log in." });
+        }
+
+        /// <summary>
+        /// Token = protected "userId|expiryTicks|fingerprint". The fingerprint is a hash of the
+        /// current password hash, so the token becomes useless once the password changes.
+        /// Nothing is stored in the database.
+        /// </summary>
+        private string CreateResetToken(User user)
+        {
+            var expires = DateTime.UtcNow.Add(ResetTokenLifetime).Ticks;
+            return _resetProtector.Protect($"{user.UserID}|{expires}|{Fingerprint(user)}");
+        }
+
+        private async Task<User?> ReadResetTokenAsync(string token)
+        {
+            try
+            {
+                var parts = _resetProtector.Unprotect(token.Trim()).Split('|');
+                if (parts.Length != 3 ||
+                    !int.TryParse(parts[0], out var userId) ||
+                    !long.TryParse(parts[1], out var expiryTicks))
+                    return null;
+
+                if (DateTime.UtcNow.Ticks > expiryTicks)
+                    return null;
+
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null || Fingerprint(user) != parts[2])
+                    return null;
+
+                return user;
+            }
+            catch (System.Security.Cryptography.CryptographicException)
+            {
+                // Tampered, malformed or made by a different key.
+                return null;
+            }
+        }
+
+        private static string Fingerprint(User user) =>
+            Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(user.PasswordHash)))[..16];
+
+        private string BuildResetLink(string token)
+        {
+            var baseUrl = _configuration["PasswordReset:ResetUrlBase"];
+            if (string.IsNullOrWhiteSpace(baseUrl))
+                baseUrl = "http://localhost:5200/Account/ResetPassword";
+
+            return $"{baseUrl}?token={Uri.EscapeDataString(token)}";
         }
 
         private bool InviteCodeIsValid(string? supplied)

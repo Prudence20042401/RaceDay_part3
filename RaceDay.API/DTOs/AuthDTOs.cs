@@ -67,6 +67,35 @@ namespace RaceDay.API.DTOs
         public string Role { get; set; } = string.Empty;
     }
 
+    /// <summary>The email address of the account that forgot its password.</summary>
+    public class ForgotPasswordDTO
+    {
+        [Required, EmailAddress]
+        public string Email { get; set; } = string.Empty;
+    }
+
+    /// <summary>Response to a forgot-password request. Always the same message, whether or not the email exists.</summary>
+    public class ForgotPasswordResponseDTO
+    {
+        public string Message { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The reset link. Only filled in when PasswordReset:ShowLinkInResponse is true
+        /// (demo / development mode with no email server). Null in production.
+        /// </summary>
+        public string? ResetLink { get; set; }
+    }
+
+    /// <summary>The reset token from the emailed link and the new password.</summary>
+    public class ResetPasswordDTO
+    {
+        [Required]
+        public string Token { get; set; } = string.Empty;
+
+        [Required, MinLength(8)]
+        public string NewPassword { get; set; } = string.Empty;
+    }
+
     /// <summary>A simple message returned by the API.</summary>
     public class MessageDTO
     {

@@ -1,0 +1,62 @@
+/* RaceDay theme - light, friendly blue */
+:root{--blue:#2f6fdb;--blue-dark:#2358b3;--blue-soft:#e8f1fd;--blue-line:#d5e2f3;--ink:#1f2a37;--muted:#66758a;--paper:#f6f9fd}
+body{background:var(--paper);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;min-height:100vh}
+a{color:var(--blue)}
+a:hover{color:var(--blue-dark)}
+
+/* navigation */
+.raced-nav{background:var(--blue)}
+.navbar-brand{font-weight:700}
+.brand-mark{display:inline-grid;place-items:center;background:#fff;color:var(--blue);width:28px;height:28px;border-radius:6px;margin-right:6px;font-size:.95rem}
+.brand-light{color:#cfe2ff}
+.nav-link{font-weight:500}
+
+/* buttons: map Bootstrap's green "success" to the blue theme */
+.btn-success{--bs-btn-bg:var(--blue);--bs-btn-border-color:var(--blue);--bs-btn-hover-bg:var(--blue-dark);--bs-btn-hover-border-color:var(--blue-dark);--bs-btn-active-bg:var(--blue-dark);--bs-btn-active-border-color:var(--blue-dark);--bs-btn-disabled-bg:var(--blue);--bs-btn-disabled-border-color:var(--blue);--bs-btn-color:#fff;--bs-btn-hover-color:#fff;--bs-btn-active-color:#fff}
+.btn-outline-success{--bs-btn-color:var(--blue);--bs-btn-border-color:var(--blue);--bs-btn-hover-bg:var(--blue);--bs-btn-hover-border-color:var(--blue);--bs-btn-hover-color:#fff;--bs-btn-active-bg:var(--blue-dark);--bs-btn-active-border-color:var(--blue-dark);--bs-btn-active-color:#fff}
+.btn-lime{background:#fff;border-color:#fff;color:var(--blue);font-weight:600}
+.btn-lime:hover{background:var(--blue-soft);border-color:var(--blue-soft);color:var(--blue-dark)}
+
+/* headings and text */
+.hero{background:var(--blue-soft);border:1px solid var(--blue-line);border-radius:12px;padding:clamp(1.5rem,4vw,3rem);color:var(--ink)}
+.hero h1{font-weight:700;max-width:640px;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.2}
+.hero p{color:var(--muted);max-width:560px;font-size:1.05rem}
+.eyebrow{color:var(--blue);font-size:.9rem;font-weight:600}
+.section-title{font-weight:700}
+.small-muted,.meta{color:var(--muted)}
+.meta{font-size:.9rem}
+
+/* cards and panels */
+.event-card,.panel{background:#fff;border:1px solid var(--blue-line);border-radius:10px;box-shadow:0 1px 3px rgba(31,42,55,.06);overflow:hidden}
+.panel{padding:1.5rem}
+.event-card img{height:180px;object-fit:cover}
+.event-placeholder{height:180px;background:var(--blue-soft);display:grid;place-items:center;color:#7d9bc9;font-size:.95rem}
+.event-card .card-body{padding:1.25rem}
+.pill{display:inline-block;border-radius:6px;padding:.2rem .6rem;background:var(--blue-soft);color:var(--blue-dark);font-size:.8rem;font-weight:600}
+
+/* forms and tables */
+.form-control,.form-select{border-radius:6px;padding:.6rem .8rem;border-color:#cbd8ea}
+.form-control:focus,.form-select:focus{border-color:var(--blue);box-shadow:0 0 0 .2rem rgba(47,111,219,.18)}
+.form-label{font-weight:600}
+.table{vertical-align:middle}
+.table thead th{color:var(--muted);font-size:.8rem;font-weight:600}
+
+/* enrolment status colours */
+.status{display:inline-block;padding:.25rem .6rem;border-radius:6px;font-size:.8rem;font-weight:600}
+.status-confirmed{background:#d9f4df;color:#176b35}
+.status-pending{background:#fff0c2;color:#855800}
+.status-cancelled{background:#f9dddd;color:#983737}
+
+.footer{margin-top:4rem;background:#fff;border-top:1px solid var(--blue-line);color:var(--muted);padding:1.2rem 0;font-size:.85rem}
+.auth-wrap{max-width:650px;margin:2rem auto}
+
+/* navigation extras */
+.nav-link.active{color:#fff!important;font-weight:600;box-shadow:inset 0 -3px 0 #fff}
+.nav-user{color:#d6e5fb;font-size:.85rem}
+
+/* imagery and home page */
+.hero-img{width:100%;height:420px;object-fit:cover;object-position:50% 6%;border-radius:10px;display:block}
+.event-hero{border-radius:10px;overflow:hidden;margin-bottom:1.5rem}
+.event-hero img{width:100%;max-height:320px;object-fit:cover;display:block}
+.step-num{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;font-weight:600;margin-bottom:.75rem}
+.pill-grey{background:#eceff3;color:#5b6778}

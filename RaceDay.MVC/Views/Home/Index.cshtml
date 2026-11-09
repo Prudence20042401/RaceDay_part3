@@ -1,0 +1,78 @@
+@model List<EventDto>
+@{
+    ViewData["Title"] = "Home";
+    var role = Context.Session.GetString("Role");
+    var signedIn = Context.Session.GetInt32("UserID") != null;
+}
+<section class="hero mb-5">
+    <div class="row align-items-center g-4">
+        <div class="col-md-6">
+            <h1>Find your next race</h1>
+            <p class="mt-3 mb-4">Browse running, walking and cycling events across South Africa, enter online and keep track of your results.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-success btn-lg" asp-controller="Events" asp-action="Index">Browse all events</a>
+                @if (!signedIn)
+                {
+                    <a class="btn btn-outline-success btn-lg" asp-controller="Account" asp-action="Register">Create a free account</a>
+                }
+                else if (role == "Organiser")
+                {
+                    <a class="btn btn-outline-success btn-lg" asp-controller="Organiser" asp-action="Dashboard">Go to your dashboard</a>
+                }
+                else
+                {
+                    <a class="btn btn-outline-success btn-lg" asp-controller="Participant" asp-action="MyEvents">View my events</a>
+                }
+            </div>
+        </div>
+        <div class="col-md-6"><img class="hero-img" src="~/img/hero.jpg" alt="Two runners training on a road" /></div>
+    </div>
+</section>
+
+<div class="d-flex justify-content-between align-items-end mb-3">
+    <h2 class="section-title mb-0">Upcoming events</h2>
+    <span class="small-muted">@Model.Count event(s)</span>
+</div>
+<form method="get" class="panel mb-4">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-6"><label class="form-label" for="search">Search by event or location</label><input id="search" name="search" value="@ViewBag.Search" class="form-control" placeholder="e.g. Soweto or Johannesburg" /></div>
+        <div class="col-md-3"><label class="form-label" for="type">Event type</label>
+            <select id="type" name="type" class="form-select" data-selected="@ViewBag.Type"><option value="All">All types</option><option value="Run">Run</option><option value="Walk">Walk</option><option value="Cycle">Cycle</option></select></div>
+        <div class="col-md-3"><button class="btn btn-success w-100">Filter events</button></div>
+    </div>
+</form>
+<div class="row g-4">
+    @foreach (var ev in Model)
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card event-card h-100">
+                <partial name="_EventImage" model="ev" />
+                <div class="card-body">
+                    <span class="pill">@ev.EventType · @ev.Distance km</span>
+                    <h5 class="fw-bold mt-3">@ev.Name</h5>
+                    <p class="meta mb-3">@ev.EventDate?.ToString("dd MMM yyyy") · @ev.Location</p>
+                    <a class="btn btn-outline-success" asp-controller="Events" asp-action="Details" asp-route-id="@ev.EventID">View event</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@if (!Model.Any())
+{
+    <div class="panel text-center py-5"><h4>No upcoming events found</h4><p class="small-muted">Try changing your filters or check back soon.</p></div>
+}
+
+@if (!signedIn)
+{
+    <h2 class="section-title mt-5 mb-3">How RaceDay works</h2>
+    <div class="row g-3">
+        <div class="col-md-4"><div class="panel h-100"><div class="step-num">1</div><h5 class="fw-bold">Create an account</h5><p class="small-muted mb-0">Sign up as a Participant in under a minute.</p></div></div>
+        <div class="col-md-4"><div class="panel h-100"><div class="step-num">2</div><h5 class="fw-bold">Pick an event</h5><p class="small-muted mb-0">Choose a race and the category that suits you, then enter online.</p></div></div>
+        <div class="col-md-4"><div class="panel h-100"><div class="step-num">3</div><h5 class="fw-bold">Track your results</h5><p class="small-muted mb-0">After the race, your finish time and position appear in My results.</p></div></div>
+    </div>
+    <div class="panel mt-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div><h5 class="fw-bold mb-1">Organising an event?</h5><p class="small-muted mb-0">Register as an Organiser to publish events, manage categories and entries, and capture results.</p></div>
+        <a class="btn btn-success" asp-controller="Account" asp-action="Register">Register as an Organiser</a>
+    </div>
+}
+@section Scripts { <script>const typeSelect=document.getElementById("type");if(typeSelect.dataset.selected){typeSelect.value=typeSelect.dataset.selected;}</script> }

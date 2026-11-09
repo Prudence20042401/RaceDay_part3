@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using RaceDay.API.Data;
+using RaceDay.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +47,8 @@ builder.Services.AddSession(options =>
 builder.Services.AddDbContext<RaceDayContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddSingleton<IEmailSender, SmtpEmailSender>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -93,7 +96,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// In Development the MVC app calls the API over plain HTTP (http://localhost:5285),
+// so do not redirect to HTTPS there; the dev certificate may not be trusted.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 // Session must come before authentication/authorization.
 app.UseSession();

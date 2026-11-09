@@ -10,6 +10,8 @@ Common failures not repeated in every row: `401 Unauthorized` (not logged in), `
 | POST | /api/auth/login | Log in and start the server-side session | None | email, password | 200 OK user summary; 401 wrong credentials |
 | GET | /api/auth/me | Show the user ID and role stored in the session | Any | None | 200 OK { userID, role }; 401 |
 | POST | /api/auth/logout | Clear the session and log out | Any | None | 200 OK message |
+| POST | /api/auth/forgot-password | Request a password reset link (valid 1 hour, single use) | None | email | 200 OK generic message (same whether or not the email exists); 400 invalid email |
+| POST | /api/auth/reset-password | Set a new password using the token from the reset link | None | token, newPassword | 200 OK message; 400 invalid/expired token or password under 8 characters |
 | GET | /api/profile | View own profile | Any | None | 200 OK profile; 401; 404 |
 | PUT | /api/profile | Update own profile | Any | firstName, lastName, (Organiser: organisationName, phoneNumber) (Participant: dateOfBirth) | 200 OK message; 400; 401; 404 |
 | GET | /api/events | List all events | None | None | 200 OK list of events |

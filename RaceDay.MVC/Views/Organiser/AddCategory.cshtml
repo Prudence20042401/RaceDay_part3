@@ -1,0 +1,36 @@
+@model CategoryDto
+@{
+    ViewData["Title"] = "Event categories";
+    var existing = ViewBag.Categories as List<CategoryDto> ?? new List<CategoryDto>();
+}
+<div class="auth-wrap">
+    <a class="small" asp-action="Dashboard">&larr; Back to dashboard</a>
+    <div class="eyebrow mt-2">Event setup</div>
+    <h1 class="section-title mb-3">Categories for @ViewBag.EventName</h1>
+    <div class="panel mb-4">
+        <h5 class="fw-bold">Current categories</h5>
+        @if (!existing.Any())
+        {
+            <p class="small-muted mb-0">No categories yet. Add the first one below so participants can enter.</p>
+        }
+        else
+        {
+            <ul class="list-group">
+                @foreach (var c in existing)
+                {
+                    <li class="list-group-item"><strong>@c.Name</strong><div class="small-muted">@c.Description</div></li>
+                }
+            </ul>
+        }
+    </div>
+    <div class="panel">
+        <h5 class="fw-bold">Add a category</h5>
+        <form asp-action="AddCategory" method="post">
+            <input asp-for="EventID" type="hidden" />
+            <div class="mb-3"><label asp-for="Name" class="form-label">Category name</label><input asp-for="Name" class="form-control" placeholder="e.g. 10 km Open or Under 20" required /></div>
+            <div class="mb-3"><label asp-for="Description" class="form-label"></label><textarea asp-for="Description" class="form-control"></textarea></div>
+            <button class="btn btn-success">Save category</button>
+            <a asp-action="Dashboard" class="btn btn-light">Done</a>
+        </form>
+    </div>
+</div>

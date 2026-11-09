@@ -1,0 +1,56 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD:?Set SA_PASSWORD in your .env file}
+    ports:
+      - "1433:1433"
+    volumes:
+      - racedaysqldata:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 25s
+
+  api:
+    build:
+      context: .
+      dockerfile: RaceDay.API/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=RaceDay;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
+      OrganiserInviteCode: ${ORGANISER_INVITE_CODE:-RACEDAY-ORGANISER-2026}
+      AzureBlobStorage__ConnectionString: ${AZURE_BLOB_CONNECTION_STRING:-}
+      AzureBlobStorage__ContainerName: raceday-images
+      # Forgot-password: the emailed link points at the MVC app. With no SMTP server
+      # configured the link is shown on the page (demo mode); set to false in production.
+      PasswordReset__ResetUrlBase: ${PASSWORD_RESET_URL_BASE:-http://localhost:8080/Account/ResetPassword}
+      PasswordReset__ShowLinkInResponse: ${PASSWORD_RESET_SHOW_LINK:-true}
+      Smtp__Host: ${SMTP_HOST:-}
+      Smtp__Port: ${SMTP_PORT:-587}
+      Smtp__Username: ${SMTP_USERNAME:-}
+      Smtp__Password: ${SMTP_PASSWORD:-}
+      Smtp__FromAddress: ${SMTP_FROM:-no-reply@raceday.local}
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    ports:
+      - "5285:8080"
+
+  mvc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ApiSettings__BaseUrl: http://api:8080/
+    depends_on:
+      - api
+    ports:
+      - "8080:8080"
+
+volumes:
+  racedaysqldata:

@@ -1,0 +1,8 @@
+@model List<EventDto>
+@{ ViewData["Title"] = "Events"; }
+<div class="eyebrow">Choose your challenge</div><h1 class="section-title mb-4">Explore events</h1>
+<form method="get" class="panel mb-4"><div class="row g-2 align-items-end"><div class="col-md-6"><label class="form-label" for="search">Search by event or location</label><input id="search" name="search" value="@ViewBag.Search" class="form-control" placeholder="e.g. Soweto or Johannesburg"/></div><div class="col-md-3"><label class="form-label" for="type">Event type</label><select id="type" name="type" class="form-select" data-selected="@ViewBag.Type"><option value="All">All types</option><option value="Run">Run</option><option value="Walk">Walk</option><option value="Cycle">Cycle</option></select></div><div class="col-md-3"><button class="btn btn-success w-100">Filter events</button></div></div></form>
+<div class="row g-4">@foreach (var ev in Model) { <div class="col-md-6 col-lg-4"><div class="card event-card h-100"><partial name="_EventImage" model="ev" /><div class="card-body"><span class="pill">@ev.EventType · @ev.Distance km</span><h5 class="fw-bold mt-3">@ev.Name</h5><p class="meta">@ev.EventDate?.ToString("dd MMM yyyy") · @ev.Location</p><p class="small-muted">@ev.EnrolmentCount entries</p><a class="btn btn-success" asp-action="Details" asp-route-id="@ev.EventID">View event</a></div></div></div> }</div>
+@if (!Model.Any()) { <div class="panel">There are no events available at the moment.</div> }
+
+@section Scripts { <script>const typeSelect=document.getElementById("type");if(typeSelect.dataset.selected){typeSelect.value=typeSelect.dataset.selected;}</script> }

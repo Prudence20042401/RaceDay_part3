@@ -1,0 +1,7 @@
+@model EventDto
+@{
+    var kind = (Model.EventType ?? "").ToLowerInvariant();
+    if (kind != "walk" && kind != "cycle") { kind = "run"; }
+    var src = string.IsNullOrWhiteSpace(Model.ImageURL) ? Url.Content("~/img/banner-" + kind + ".jpg") : Model.ImageURL;
+}
+<img src="@src" alt="@Model.Name banner" />

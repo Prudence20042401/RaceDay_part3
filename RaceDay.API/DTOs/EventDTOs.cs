@@ -42,5 +42,6 @@ namespace RaceDay.API.DTOs
 
         /// <summary>Number of enrolments for this event.</summary>
         public int EnrolmentCount { get; set; }
+        public string? ImageURL { get; set; }
     }
 }
