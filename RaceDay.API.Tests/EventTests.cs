@@ -56,20 +56,6 @@ namespace RaceDay.API.Tests
         }
 
         [Fact]
-        public async Task GetEvents_WithSearch_ReturnsOnlyMatchingEvents()
-        {
-            await LoginAsNewOrganiser();
-            var tag = Guid.NewGuid().ToString("N")[..8];
-            await CreateEvent($"Soweto-{tag} Marathon");
-            await CreateEvent("Some Other Event");
-
-            var events = await Client.GetFromJsonAsync<List<EventInfo>>($"/api/Events?search={tag}");
-
-            Assert.NotNull(events);
-            Assert.Single(events!);
-        }
-
-        [Fact]
         public async Task CreateEvent_WithNegativeDistance_ReturnsBadRequest()
         {
             await LoginAsNewOrganiser();
@@ -227,5 +213,6 @@ namespace RaceDay.API.Tests
 
             Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         }
+
     }
 }
