@@ -54,15 +54,18 @@ namespace RaceDay.API.Controllers
         [HttpGet("{id:int}")]
         [ProducesResponseType(typeof(EventResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEvent(int id)
+        public async Task<IActionResult> GetEvent([FromQuery] string? search, [FromQuery] string? eventType)
         {
-            var ev = await Project(Context.Events.Where(e => e.EventID == id))
-                .FirstOrDefaultAsync();
+            var query = Context.Events.AsQueryable();
 
-            if (ev == null)
-                return NotFound();
+            if (!string.IsNullOrWhiteSpace(search))
+                query = query.Where(e => e.Name.Contains(search) || e.Location.Contains(search));
 
-            return Ok(ev);
+            if (!string.IsNullOrWhiteSpace(eventType))
+                query = query.Where(e => e.EventType == eventType);
+
+            var events = await Project(query.OrderBy(e => e.EventDate)).ToListAsync();
+            return Ok(events);
         }
 
         /// <summary>
