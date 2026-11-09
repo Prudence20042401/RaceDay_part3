@@ -114,6 +114,9 @@ dotnet build RaceDay.API.sln --configuration Release
 dotnet test RaceDay.API.sln --configuration Release
 ```
 
+## Video Presentation
+[youtube link](https://youtu.be/nC7OiqRuY3E?si=dczsjYThvwXNlgdM)
+
 ## AI assistance disclosure
 
 AI tools (Claude) were used during Part 3 to help plan the MVC structure and to draft parts of the API client, the Azure Blob upload endpoints, the Docker configuration and this README. I reviewed, tested and adapted the generated work and can explain it in my video presentation.
