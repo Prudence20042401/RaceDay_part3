@@ -6,7 +6,6 @@
 
 # RaceDay - Event Management System
 
-
 ### part 3 CI/CD
 - GitHub Actions workflow validates repository structure
 - ✅ Green build:
