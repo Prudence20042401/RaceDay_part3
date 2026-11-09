@@ -94,6 +94,13 @@ Docker Desktop (or Docker Engine with the Compose plugin) is required.
 3. Optionally set `ORGANISER_INVITE_CODE` and `AZURE_BLOB_CONNECTION_STRING` (image uploads need the Azure connection string; the rest of the site works without it).
 4. From the repository root run the single command:
 
+## Troubleshooting
+
+- **API returns 500 on start:** check `SA_PASSWORD` in `.env` meets SQL Server's complexity rules.
+- **Reset link not emailed:** leave `SMTP_HOST` empty and set `PASSWORD_RESET_SHOW_LINK=true` to see the link on the page.
+- **Port already in use:** stop other apps on 5200/5285 or change the ports in `docker-compose.yml`.
+- **Health check:** open `/health` on the API to confirm it is running.
+
 ```bash
 docker compose up --build
 ```
